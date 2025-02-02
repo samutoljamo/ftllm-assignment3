@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import { pipeline } from '@huggingface/transformers';
 import { Groq } from 'groq-sdk';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -12,6 +13,8 @@ const customModel = await pipeline('sentiment-analysis', 'samutoljamo/imdb-disti
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY
 });
+
+app.use(cors());
 
 app.post('/analyze', async (req: Request, res: Response) => {
   try {
@@ -30,7 +33,7 @@ app.post('/analyze', async (req: Request, res: Response) => {
       }
 
       res.json({
-        sentiment: result.label === 'POSITIVE' ? 'positive' : 'negative',
+        sentiment: result.label === 'LABEL_1' ? 'positive' : 'negative',
         confidence: result.score
       });
       return;
